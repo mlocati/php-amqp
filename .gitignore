@@ -44,3 +44,11 @@ CMakeLists.txt
 .idea/
 /vendor/
 /composer.lock
+
+# Compilation under Windows
+/config.nice.bat
+/configure.bat
+/configure.js
+/task.bat
+/x64/
+/x86/
