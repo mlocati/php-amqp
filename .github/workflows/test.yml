@@ -1,0 +1,110 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: ubuntu-latest
+            php-version: '7.4'
+            librabbitmq-version: master
+            test-php-args: ''
+#          - os: ubuntu-latest
+#            php-version: '7.4'
+#            librabbitmq-version: 0.8.0
+#            test-php-args: ''
+#          - os: ubuntu-latest
+#            php-version: '7.4'
+#            librabbitmq-version: 0.7.1
+#            test-php-args: ''
+#          - os: ubuntu-latest
+#            php-version: '7.3'
+#            librabbitmq-version: master
+#            test-php-args: ''
+#          - os: ubuntu-latest
+#            php-version: '7.3'
+#            librabbitmq-version: 0.8.0
+#            test-php-args: ''
+#          - os: ubuntu-latest
+#            php-version: '7.3'
+#            librabbitmq-version: 0.7.1
+#            test-php-args: ''
+#          - os: ubuntu-latest
+#            php-version: '7.2'
+#            librabbitmq-version: master
+#            test-php-args: ''
+#          - os: ubuntu-latest
+#            php-version: '7.2'
+#            librabbitmq-version: master
+#            test-php-args: -m
+#          - os: ubuntu-latest
+#            php-version: '7.1'
+#            librabbitmq-version: master
+#            test-php-args: ''
+#          - os: ubuntu-latest
+#            php-version: '7.1'
+#            librabbitmq-version: master
+#            test-php-args: -m
+#          - os: ubuntu-latest
+#            php-version: '7.0'
+#            librabbitmq-version: master
+#            test-php-args: ''
+#          - os: ubuntu-latest
+#            php-version: '7.0'
+#            librabbitmq-version: master
+#            test-php-args: -m
+#          - os: ubuntu-latest
+#            php-version: '5.6'
+#            librabbitmq-version: master
+#            test-php-args: ''
+#          - os: ubuntu-latest
+#            php-version: '5.6'
+#            librabbitmq-version: master
+#            test-php-args: -m
+#          - os: ubuntu-latest
+#            php-version: '5.6'
+#            librabbitmq-version: 0.8.0
+#            test-php-args: -m
+#          - os: ubuntu-latest
+#            php-version: '5.6'
+#            librabbitmq-version: 0.7.1
+#            test-php-args: -m
+          - os: windows-latest
+            php-version: '7.4'
+            librabbitmq-version: 0.9.0
+            test-php-args: ''
+#          - os: windows-latest
+#            php-version: '7.3'
+#            librabbitmq-version: 0.9.0
+#            test-php-args: ''
+    name: Test
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          coverage: none
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Install PHP SDK (Windows)
+        if: startsWith(matrix.os, 'windows')
+        run: ./.github/workflows/install-php-sdk.ps1 -Version 2.2.0
+      - name: Install RabbitMQ (Ubuntu)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: ./.github/workflows/install-librabbitmq "${{ matrix.librabbitmq-version }}"
+      - name: Install RabbitMQ (Windows)
+        if: startsWith(matrix.os, 'windows')
+        run: ./.github/workflows/install-dependency.ps1 -Dependency librabbitmq -Version "${{ matrix.librabbitmq-version }}"

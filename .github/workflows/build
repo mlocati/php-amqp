@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Setup a sane environment
+set -o errexit
+set -o nounset
+
+phpize
+./configure
+make -j$(nproc)
